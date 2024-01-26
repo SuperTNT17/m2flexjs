@@ -1,7 +1,5 @@
-class Rect
-{
-    constructor(x, y, w, h)
-    {
+class Rect {
+    constructor(x, y, w, h) {
         this.x = x
         this.y = y
         this.w = w
@@ -45,50 +43,44 @@ let ingameState = ingamestate_start
 
 let boardPositionSize = 50
 let pawnPositions = []
-let boardPositions =[]
+let boardPositions = []
 let playerAmountButtons = []
 
-function loadImages()
-{
+function loadImages() {
     let sources = [
         "img/dice1.png", "img/dice2.png", "img/dice3.png", "img/dice4.png", "img/dice5.png", "img/dice6.png",
-        "img/pawn0.png", "img/pawn1.png", "img/pawn2.png", "img/pawn3.png", 
-        "img/snakes.png", 
-        "img/trophy.png", 
-        "img/window.png", 
+        "img/pawn0.png", "img/pawn1.png", "img/pawn2.png", "img/pawn3.png",
+        "img/snakes.png",
+        "img/trophy.png",
+        "img/window.png",
     ];
-    
+
     let scope = this;
 
     let loaded = 0;
-    for (let i = 0; i < sources.length; i++)
-    {
+    for (let i = 0; i < sources.length; i++) {
         let img = new Image();
 
 
-        img.onload = function ()
-        {
+        img.onload = function () {
             loaded++;
-            if (loaded == sources.length)
-            {
+            if (loaded == sources.length) {
                 imageLoaded();
             }
         };
         img.src = sources[i];
 
-        images[ sources[i].replace("img/","")] = img;
+        images[sources[i].replace("img/", "")] = img;
     }
 }
 
-function imageLoaded()
-{
+function imageLoaded() {
     initGame()
-    canvas.addEventListener("click", (e)=>{canvasClicked(e)})
+    canvas.addEventListener("click", (e) => { canvasClicked(e) })
     draw()
 }
 
-function canvasClicked(mouseEvent)
-{
+function canvasClicked(mouseEvent) {
     if (gameState == gamestate_start) {
         for (let i = 0; i < playerAmountButtons.length; i++) {
             let button = playerAmountButtons[i];
@@ -103,20 +95,17 @@ function canvasClicked(mouseEvent)
     }
 }
 
-function inRect(px, py, rect)
-{
+function inRect(px, py, rect) {
     let result = (px >= rect.x && px <= rect.x2 && py >= rect.y && py <= rect.y2)
     return result
 }
 
-function clearCanvas()
-{
+function clearCanvas() {
     g.fillStyle = "lightslategray";
     g.fillRect(0, 0, canvas.width, canvas.height);
 }
 
-function draw()
-{
+function draw() {
     clearCanvas()
     if (gameState == gamestate_start) {
         drawGameStart()
@@ -126,26 +115,24 @@ function draw()
     }
 }
 
-function createBoardPositions()
-{
-    let x= 0;
+function createBoardPositions() {
+    let x = 0;
     let y = canvas.height - boardPositionSize;
-    let path = [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1] ;
+    let path = [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
-    for(let i = 0 ; i < path.length; i++)
-    {
+    for (let i = 0; i < path.length; i++) {
 
-        if(path[i] == 1)//gaan naar rechts
+        if (path[i] == 1)//gaan naar rechts
         {
             //bedenk hier wat je met de x moet doen
             x += boardPositionSize + 5
         }
-        else if(path[i] == 3)//gaan naar links
+        else if (path[i] == 3)//gaan naar links
         {
             // bedenk hier wat je met de x moet doen
             x -= boardPositionSize + 5
         }
-        else if(path[i] == 0)//gaan hier naar boven
+        else if (path[i] == 0)//gaan hier naar boven
         {
             //bedenk hier wat je met de y moet doen
             y -= boardPositionSize + 5
@@ -154,22 +141,34 @@ function createBoardPositions()
     }
 }
 
-function startGame(playerAmount)
-{
+function startGame(playerAmount) {
+    gameState = gamestate_ingame
+    ingameState = ingamestate_start
+    pawnPositions = []
+    playerTurn = 0
+    winner = -1
+    console.log("playerAmount " + playerAmount)
+    for (let i = 0; i < playerAmount; i++) {
+        pawnPositions.push(createPawn(i))
+    }
 
+    draw()
 }
 
-function initGame(){
+function createPawn(playerI) {
+    return { boardI: 0, playerI: playerI }
+}
+
+function initGame() {
     createBoardPositions()
     for (let i = 0; i < 4; i++) {
-        let button = new Rect(uiWindow.x + 5 + i * 55, uiWindow.y + 50, 50 ,50)       
+        let button = new Rect(uiWindow.x + 5 + i * 55, uiWindow.y + 50, 50, 50)
         playerAmountButtons[i] = button
         button.playerAmount = i + 1
     }
 }
 
-function drawGameStart()
-{
+function drawGameStart() {
     for (let i = 0; i < playerAmountButtons.length; i++) {
         g.fillStyle = "#004400";
         g.fillRect(playerAmountButtons[i].x, playerAmountButtons[i].y, playerAmountButtons[i].h, playerAmountButtons[i].w);
@@ -180,10 +179,8 @@ function drawGameStart()
     g.fillText("Click the amount of players to start", uiWindow.x, uiWindow.y);
 }
 
-function drawIngame()
-{
-    for(let i = 0 ; i < boardPositions.length; i++)
-    {
+function drawIngame() {
+    for (let i = 0; i < boardPositions.length; i++) {
         let pos = boardPositions[i];
 
         g.fillStyle = "#004400";
@@ -191,10 +188,26 @@ function drawIngame()
         g.fillStyle = "#FFFFFF";
         g.fillText((i + 1) + "", pos.x, pos.y + 20);
     }
+
+    let x = 0
+    let y = 0
+    for (let i = 0; i < pawnPositions.length; i++) {
+        let pos = pawnPositions[i]
+        let boardI = pos.boardI
+
+        let boardpos = boardPositions[boardI]
+        let pawnSize = boardPositionSize / 2
+        g.drawImage(images["pawn" + i + ".png"], boardpos.x + (x) * pawnSize, boardpos.y + (y)*pawnSize, boardpos.w / 2, boardpos.h / 2)
+        x++;
+        if(x == 2){
+            x = 0
+            y += 1
+        }
+    }
+    g.drawImage(images["snakes.png"], 0, 55, 600, 600)
 }
 
-function drawGameOver()
-{
+function drawGameOver() {
 
 }
 
