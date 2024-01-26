@@ -46,6 +46,8 @@ let pawnPositions = []
 let boardPositions = []
 let playerAmountButtons = []
 
+let lastRoll = -1
+
 function loadImages() {
     let sources = [
         "img/dice1.png", "img/dice2.png", "img/dice3.png", "img/dice4.png", "img/dice5.png", "img/dice6.png",
@@ -91,6 +93,9 @@ function canvasClicked(mouseEvent) {
                 startGame(button.playerAmount)
                 break;
             }
+            else if(gameState == ingamestate_start){
+                startRoll()
+            }
         }
     }
 }
@@ -112,6 +117,7 @@ function draw() {
     }
     if (gameState == gamestate_ingame) {
         drawIngame()
+        drawUI()
     }
 }
 
@@ -201,7 +207,7 @@ function drawIngame() {
         x++;
         if(x == 2){
             x = 0
-            y += 1
+            y++
         }
     }
     g.drawImage(images["snakes.png"], 0, 55, 600, 600)
@@ -209,6 +215,25 @@ function drawIngame() {
 
 function drawGameOver() {
 
+}
+
+function startRoll(){
+
+}
+
+function endRoll(){
+
+}
+
+function drawUI(){
+    if (ingameState == ingamestate_roll) {
+        if (lastRoll == -1) {
+            g.fillText("rollen....", 20, 20)
+        }
+        else{
+            g.drawImage("dice" + lastRoll + ".png")
+        }
+    }
 }
 
 loadImages()
